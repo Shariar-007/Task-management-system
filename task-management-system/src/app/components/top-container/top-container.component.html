@@ -1,0 +1,16 @@
+
+
+<div class="card">
+  <div class="card-header text-center">
+    {{name? name: ""}}
+  </div>
+  <div class="card-body">
+    <ng-container *ngFor="let task of tasks;">
+      <app-task-tab [task]="task"></app-task-tab>
+    </ng-container>
+
+<!--    <h5 class="card-title">Special title treatment</h5>-->
+<!--    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>-->
+<!--    <a href="#" class="btn btn-primary">Go somewhere</a>-->
+  </div>
+</div>

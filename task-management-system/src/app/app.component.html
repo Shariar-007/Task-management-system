@@ -1,0 +1,20 @@
+
+
+<div class="wrapper">
+  <div class="container-fluid my-3">
+    <div class="row h-100">
+      <div class="col-12 d-flex justify-content-end mb-3">
+        <button type="button" class="btn btn-primary">Add Task</button>
+      </div>
+      <div class="col-md-4">
+        <app-top-container [name]="'To-do'" [tasks]="toDoTasks"></app-top-container>
+      </div>
+      <div class="col-md-4">
+        <app-top-container [name]="'In-Progress'" [tasks]="inProgressTasks"></app-top-container>
+      </div>
+      <div class="col-md-4">
+        <app-top-container [name]="'Done'" [tasks]="doneTasks"></app-top-container>
+      </div>
+    </div>
+  </div>
+</div>
