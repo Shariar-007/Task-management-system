@@ -66,8 +66,13 @@
             {{task.assignedPerson ? task.assignedPerson  : ''}}
           </div>
 
+          <div class="form-group">
+            <label class="mr-3">Attachment: </label>
+            <img [src]="task.attachment" style="width: 100px; height: 100px;" *ngIf="task.attachment"/>
+          </div>
+
           <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-success pull-right" (click)="updateTask()">want to Update</button>
+            <button type="button" class="btn btn-success pull-right" (click)="updateTask()">Update</button>
           </div>
 
           <!--          <div class="input-group my-3">-->
