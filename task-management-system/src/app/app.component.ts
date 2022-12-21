@@ -1,5 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, TemplateRef} from '@angular/core';
 import {TaskManagementService} from "./services/task-management.service";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+// import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-root',
@@ -13,88 +16,73 @@ export class AppComponent implements OnInit{
   toDoTasks: any;
   inProgressTasks: any;
   doneTasks: any;
+  // @ts-ignore
+  taskForm: FormGroup;
 
-
-  // obj: any = [
-  //   {
-  //   title: 'Title 1',
-  //   description: 'Description',
-  //   priority: 'Low',
-  //   startDate: '1-1-2022',
-  //   endDate: '31-1-2022',
-  //   status: 'To-do',
-  //   assignedPerson: 'ABC',
-  //   attachment: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.wallpaperflare.com%2Fsearch%3Fwallpaper%3Danime%2Bboys&psig=AOvVaw1YN4VM__snKxIygIpqfiWs&ust=1671696819003000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCIiV-4miivwCFQAAAAAdAAAAABAE',
-  // },
-  //   {
-  //     title: 'Title 2',
-  //     description: 'Description',
-  //     priority: 'Low',
-  //     startDate: '1-1-2022',
-  //     endDate: '31-1-2022',
-  //     status: 'To-do',
-  //     assignedPerson: 'ABC',
-  //     attachment: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.wallpaperflare.com%2Fsearch%3Fwallpaper%3Danime%2Bboys&psig=AOvVaw1YN4VM__snKxIygIpqfiWs&ust=1671696819003000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCIiV-4miivwCFQAAAAAdAAAAABAE',
-  //   },
-  //   {
-  //     title: 'Title 3',
-  //     description: 'Description',
-  //     priority: 'Low',
-  //     startDate: '1-1-2022',
-  //     endDate: '31-1-2022',
-  //     status: 'In progress',
-  //     assignedPerson: 'ABC',
-  //     attachment: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.wallpaperflare.com%2Fsearch%3Fwallpaper%3Danime%2Bboys&psig=AOvVaw1YN4VM__snKxIygIpqfiWs&ust=1671696819003000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCIiV-4miivwCFQAAAAAdAAAAABAE',
-  //   },
-  //   {
-  //     title: 'Title 4',
-  //     description: 'Description',
-  //     priority: 'Low',
-  //     startDate: '1-1-2022',
-  //     endDate: '31-1-2022',
-  //     status: 'In progress',
-  //     assignedPerson: 'ABC',
-  //     attachment: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.wallpaperflare.com%2Fsearch%3Fwallpaper%3Danime%2Bboys&psig=AOvVaw1YN4VM__snKxIygIpqfiWs&ust=1671696819003000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCIiV-4miivwCFQAAAAAdAAAAABAE',
-  //   },
-  //   {
-  //     title: 'Title 5',
-  //     description: 'Description',
-  //     priority: 'Low',
-  //     startDate: '1-1-2022',
-  //     endDate: '31-1-2022',
-  //     status: 'Done',
-  //     assignedPerson: 'ABC',
-  //     attachment: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.wallpaperflare.com%2Fsearch%3Fwallpaper%3Danime%2Bboys&psig=AOvVaw1YN4VM__snKxIygIpqfiWs&ust=1671696819003000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCIiV-4miivwCFQAAAAAdAAAAABAE',
-  //   },
-  //   {
-  //     title: 'Title 6',
-  //     description: 'Description',
-  //     priority: 'Low',
-  //     startDate: '1-1-2022',
-  //     endDate: '31-1-2022',
-  //     status: 'Done',
-  //     assignedPerson: 'ABC',
-  //     attachment: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.wallpaperflare.com%2Fsearch%3Fwallpaper%3Danime%2Bboys&psig=AOvVaw1YN4VM__snKxIygIpqfiWs&ust=1671696819003000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCIiV-4miivwCFQAAAAAdAAAAABAE',
-  //   },
-  // ];
-
-  constructor(private taskManagementService: TaskManagementService) {
+  // private toast: ToastrService,
+  constructor(private taskManagementService: TaskManagementService,
+              private modalService: NgbModal, private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
+    this.tasks = [];
+    this.taskForm = this.fb.group({
+      id: [''],
+      title: ["", [Validators.required, Validators.maxLength(100)]],
+      description: ["", [Validators.required, Validators.maxLength(150)]],
+      priority: ["", Validators.required],
+      startDate: ["", Validators.required],
+      endDate: ["", Validators.required],
+      status: ["", Validators.required],
+      assignedPerson: ["", Validators.required],
+      attachment: ["", ],
+    });
+
     // this.taskManagementService.setDataToLocalStorage('task', JSON.stringify(this.obj))
     if(this.taskManagementService.getDataFromLocalStorage('task') && this.taskManagementService.getDataFromLocalStorage('task') != '') {
       // @ts-ignore
       this.tasks = JSON.parse(this.taskManagementService.getDataFromLocalStorage('task'));
-      console.log(this.tasks);
-      this.toDoTasks = this.tasks.filter((item: { status: string; }) => item.status === 'To-do');
-      this.inProgressTasks = this.tasks.filter((item: { status: string; }) => item.status === 'In progress');
-      this.doneTasks = this.tasks.filter((item: { status: string; }) => item.status === 'Done');
+      // console.log(this.tasks);
+      this.toDoTasks = this.tasks.filter((item: { status: string; }) => item.status === 'toDo');
+      this.inProgressTasks = this.tasks.filter((item: { status: string; }) => item.status === 'inProgress');
+      this.doneTasks = this.tasks.filter((item: { status: string; }) => item.status === 'done');
     }
 
   }
 
 
+  onAddTusk(template: TemplateRef<any>) {
+    this.modalService.open(template, {centered: true});
+  }
 
+  closeModal() {
+    this.modalService.dismissAll();
+  }
 
+  onCreateTask() {
+    if(this.taskManagementService.getDataFromLocalStorage('task') && this.taskManagementService.getDataFromLocalStorage('task') != '') {
+      // @ts-ignore
+      let tasks: any[] = JSON.parse(this.taskManagementService.getDataFromLocalStorage('task'));
+      this.taskForm.get('id')?.setValue(Math.floor((Math.random() * 1000)));
+      tasks.push(this.taskForm.value);
+      this.taskManagementService.setDataToLocalStorage('task', JSON.stringify(tasks));
+      this.ngOnInit();
+    } else {
+      let tasks = [];
+      this.taskForm.get('id')?.setValue(Math.floor((Math.random() * 1000)));
+      tasks[0] = this.taskForm.value;
+      this.taskManagementService.setDataToLocalStorage('task', JSON.stringify(tasks));
+      this.ngOnInit();
+    }
+    this.closeModal();
+  }
+
+  onFileChange(event: any) {
+    if (event?.target?.files?.length > 0) {
+      const file = event.target.files[0];
+      this.taskForm.patchValue({
+        attachment: file
+      });
+    }
+  }
 }
